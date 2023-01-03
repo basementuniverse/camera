@@ -69,3 +69,11 @@ const camera = new Camera(options);
 | `maxScale` | `number` | `4` | Maximum zoom level |
 | `moveEaseAmount` | `number` | `0.9` | How quickly the camera moves to its target position |
 | `scaleEaseAmount` | `number` | `0.9` | How quickly the camera zooms to its target scale |
+
+## Other components
+
+* [Camera](https://www.npmjs.com/package/@basementuniverse/camera)
+* [Content Manager](https://www.npmjs.com/package/@basementuniverse/content-manager)
+* [Debug](https://www.npmjs.com/package/@basementuniverse/debug)
+* [Input Manager](https://www.npmjs.com/package/@basementuniverse/input-manager)
+* [Scene Manager](https://www.npmjs.com/package/@basementuniverse/scene-manager)
