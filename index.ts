@@ -61,6 +61,7 @@ export default class Camera {
 
   public constructor(position: vec, options?: Partial<CameraOptions>) {
     this.position = position;
+    this.actualPosition = position;
     this.options = Object.assign(
       {},
       Camera.defaultOptions,
