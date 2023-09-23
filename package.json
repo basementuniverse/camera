@@ -1,6 +1,6 @@
 {
   "name": "@basementuniverse/camera",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A camera component for use in 2d browser games",
   "main": "build/index.js",
   "types": "build/index.d.ts",
