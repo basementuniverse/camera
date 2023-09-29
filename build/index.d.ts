@@ -14,10 +14,14 @@ export type CameraOptions = {
     maxScale: number;
     /**
      * Camera movement ease amount
+     *
+     * Set to 0 for no easing
      */
     moveEaseAmount: number;
     /**
      * Camera scaling ease amount
+     *
+     * Set to 0 for no easing
      */
     scaleEaseAmount: number;
 };
@@ -32,12 +36,16 @@ export default class Camera {
     private options;
     private size;
     private actualPosition;
+    private targetPosition;
     private actualScale;
     private targetScale;
-    position: vec;
     constructor(position: vec, options?: Partial<CameraOptions>);
+    get position(): vec;
+    set position(value: vec);
+    set positionImmediate(value: vec);
     get scale(): number;
     set scale(value: number);
+    set scaleImmediate(value: number);
     /**
      * Get screen bounds based on the current camera position and scale
      */

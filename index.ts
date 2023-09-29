@@ -18,11 +18,15 @@ export type CameraOptions = {
 
   /**
    * Camera movement ease amount
+   *
+   * Set to 0 for no easing
    */
   moveEaseAmount: number;
 
   /**
    * Camera scaling ease amount
+   *
+   * Set to 0 for no easing
    */
   scaleEaseAmount: number;
 };
@@ -43,8 +47,8 @@ export default class Camera {
     allowScale: true,
     minScale: 0.5,
     maxScale: 4,
-    moveEaseAmount: 0.9,
-    scaleEaseAmount: 0.9,
+    moveEaseAmount: 0.1,
+    scaleEaseAmount: 0.1,
   };
 
   private options: CameraOptions;
@@ -53,20 +57,33 @@ export default class Camera {
 
   private actualPosition: vec = vec();
 
+  private targetPosition: vec = vec();
+
   private actualScale: number = 1;
 
   private targetScale: number = 1;
 
-  public position: vec = vec();
-
   public constructor(position: vec, options?: Partial<CameraOptions>) {
-    this.position = position;
     this.actualPosition = position;
+    this.targetPosition = position;
     this.options = Object.assign(
       {},
       Camera.defaultOptions,
       options ?? {}
     );
+  }
+
+  public get position(): vec {
+    return this.targetPosition;
+  }
+
+  public set position(value: vec) {
+    this.targetPosition = value;
+  }
+
+  public set positionImmediate(value: vec) {
+    this.actualPosition = value;
+    this.targetPosition = value;
   }
 
   public get scale(): number {
@@ -77,15 +94,20 @@ export default class Camera {
     this.targetScale = clamp(value, this.options.minScale, this.options.maxScale);
   }
 
+  public set scaleImmediate(value: number) {
+    this.actualScale = clamp(value, this.options.minScale, this.options.maxScale);
+    this.targetScale = this.actualScale;
+  }
+
   /**
    * Get screen bounds based on the current camera position and scale
    */
   public get bounds(): CameraBounds {
     return {
-      top: this.position.y - (this.size.y / 2) / this.scale,
-      bottom: this.position.y + (this.size.y / 2) / this.scale,
-      left: this.position.x - (this.size.x / 2) / this.scale,
-      right: this.position.x + (this.size.x / 2) / this.scale
+      top: this.actualPosition.y - (this.size.y / 2) / this.actualScale,
+      bottom: this.actualPosition.y + (this.size.y / 2) / this.actualScale,
+      left: this.actualPosition.x - (this.size.x / 2) / this.actualScale,
+      right: this.actualPosition.x + (this.size.x / 2) / this.actualScale
     };
   }
 
@@ -107,11 +129,11 @@ export default class Camera {
   public draw(context: CanvasRenderingContext2D, width: number, height: number) {
     this.size = vec(width, height);
 
-    const d = vec.sub(this.actualPosition, this.position);
+    const d = vec.sub(this.actualPosition, this.targetPosition);
     this.actualPosition = vec.add(this.position, vec.mul(d, this.options.moveEaseAmount));
 
     const s = clamp(this.targetScale, this.options.minScale, this.options.maxScale);
-    this.actualScale = s + (this.actualScale - s) * (1 - this.options.scaleEaseAmount);
+    this.actualScale = s + (this.actualScale - s) * this.options.scaleEaseAmount;
 
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.translate(

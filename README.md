@@ -33,7 +33,11 @@ class Game {
 
 Move the camera by setting `camera.position`.
 
+Snap the camera to a new position (without easing) by setting `camera.positionImmediate`.
+
 Zoom the camera by setting `camera.scale`.
+
+Snap the camera to a new zoom level (without easing) by setting `camera.scaleImmediate`.
 
 Fetch the camera's world-space bounds:
 
@@ -67,8 +71,8 @@ const camera = new Camera(options);
 | `allowScale` | `boolean` | `true` | Allow the camera to zoom |
 | `minScale` | `number` | `0.5` | Minimum zoom level |
 | `maxScale` | `number` | `4` | Maximum zoom level |
-| `moveEaseAmount` | `number` | `0.9` | How quickly the camera moves to its target position |
-| `scaleEaseAmount` | `number` | `0.9` | How quickly the camera zooms to its target scale |
+| `moveEaseAmount` | `number` | `0.1` | Position easing amount, set to 0 for no easing |
+| `scaleEaseAmount` | `number` | `0.1` | Scale easing amount, set to 0 for no easing |
 
 ## Other components
 
