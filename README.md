@@ -39,9 +39,13 @@ class Game {
 
 Move the camera by setting `camera.position`.
 
+Get the camera's current "real" position (after easing) by reading `camera.actualPosition`.
+
 Snap the camera to a new position (without easing) by setting `camera.positionImmediate`.
 
 Zoom the camera by setting `camera.scale`.
+
+Get the camera's current "real" zoom level (after easing) by reading `camera.actualScale`.
 
 Snap the camera to a new zoom level (without easing) by setting `camera.scaleImmediate`.
 
@@ -79,3 +83,13 @@ const camera = new Camera(options);
 | `maxScale` | `number` | `4` | Maximum zoom level |
 | `moveEaseAmount` | `number` | `0.1` | Position easing amount, set to 0 for no easing |
 | `scaleEaseAmount` | `number` | `0.1` | Scale easing amount, set to 0 for no easing |
+| `bounds` | `Bounds` | `undefined` | Optional movement bounds |
+
+```ts
+type Bounds = {
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+};
+```
