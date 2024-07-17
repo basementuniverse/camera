@@ -2,6 +2,11 @@ import { vec } from '@basementuniverse/vec';
 
 export type CameraOptions = {
   /**
+   * Optionally restrict camera position to bounds
+   */
+  bounds?: CameraBounds;
+
+  /**
    * Allow the viewport to be scaled
    */
   allowScale: boolean;
@@ -91,11 +96,19 @@ export default class Camera {
   }
 
   public set scale(value: number) {
-    this.targetScale = clamp(value, this.options.minScale, this.options.maxScale);
+    this.targetScale = clamp(
+      value,
+      this.options.minScale,
+      this.options.maxScale
+    );
   }
 
   public set scaleImmediate(value: number) {
-    this.actualScale = clamp(value, this.options.minScale, this.options.maxScale);
+    this.actualScale = clamp(
+      value,
+      this.options.minScale,
+      this.options.maxScale
+    );
     this.targetScale = this.actualScale;
   }
 
@@ -126,8 +139,58 @@ export default class Camera {
   /**
    * Update context transforms to match camera position and scale
    */
-  public draw(context: CanvasRenderingContext2D, width: number, height: number) {
-    this.size = vec(width, height);
+  public draw(context: CanvasRenderingContext2D, screen: vec) {
+    this.size = vec(screen);
+
+    // Maybe clamp position to bounds
+    if (this.options.bounds) {
+      const screenScaled = vec.map(
+        vec.mul(this.size, 1 / this.actualScale),
+        Math.ceil
+      );
+
+      // If the scaled screen size is larger than allowed bounds, we resize
+      // the bounds to prevent jittering
+      const actualBounds = {
+        ...this.options.bounds,
+      };
+      if (screenScaled.x > actualBounds.right - actualBounds.left) {
+        const boundsWidth = actualBounds.right - actualBounds.left;
+        const halfDiff = (screenScaled.x - boundsWidth) / 2;
+        actualBounds.left -= halfDiff;
+        actualBounds.right += halfDiff;
+      }
+      if (screenScaled.y > actualBounds.bottom - actualBounds.top) {
+        const boundsHeight = actualBounds.bottom - actualBounds.top;
+        const halfDiff = (screenScaled.y - boundsHeight) / 2;
+        actualBounds.top -= halfDiff;
+        actualBounds.bottom += halfDiff;
+      }
+
+      const halfScreenScaled = vec.map(
+        vec.mul(screenScaled, 1 / 2),
+        Math.ceil
+      );
+      const minPosition = vec(
+        actualBounds.left + halfScreenScaled.x,
+        actualBounds.top + halfScreenScaled.y
+      );
+      const maxPosition = vec(
+        actualBounds.right - halfScreenScaled.x,
+        actualBounds.bottom - halfScreenScaled.y
+      );
+
+      this.targetPosition.x = clamp(
+        this.targetPosition.x,
+        minPosition.x,
+        maxPosition.x
+      );
+      this.targetPosition.y = clamp(
+        this.targetPosition.y,
+        minPosition.y,
+        maxPosition.y
+      );
+    }
 
     const d = vec.sub(this.actualPosition, this.targetPosition);
     this.actualPosition = vec.add(this.position, vec.mul(d, this.options.moveEaseAmount));

@@ -1,6 +1,10 @@
 import { vec } from '@basementuniverse/vec';
 export type CameraOptions = {
     /**
+     * Optionally restrict camera position to bounds
+     */
+    bounds?: CameraBounds;
+    /**
      * Allow the viewport to be scaled
      */
     allowScale: boolean;
@@ -57,5 +61,5 @@ export default class Camera {
     /**
      * Update context transforms to match camera position and scale
      */
-    draw(context: CanvasRenderingContext2D, width: number, height: number): void;
+    draw(context: CanvasRenderingContext2D, screen: vec): void;
 }

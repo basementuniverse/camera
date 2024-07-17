@@ -14,7 +14,7 @@
     "url": "git+https://github.com/basementuniverse/camera.git"
   },
   "dependencies": {
-    "@basementuniverse/vec": "^1.0.0"
+    "@basementuniverse/vec": "^1.0.2"
   },
   "devDependencies": {
     "@types/node": "^18.11.12",
