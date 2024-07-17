@@ -60,16 +60,16 @@ export default class Camera {
 
   private size: vec = vec();
 
-  private actualPosition: vec = vec();
+  private _actualPosition: vec = vec();
 
   private targetPosition: vec = vec();
 
-  private actualScale: number = 1;
+  private _actualScale: number = 1;
 
   private targetScale: number = 1;
 
   public constructor(position: vec, options?: Partial<CameraOptions>) {
-    this.actualPosition = position;
+    this._actualPosition = position;
     this.targetPosition = position;
     this.options = Object.assign(
       {},
@@ -87,12 +87,20 @@ export default class Camera {
   }
 
   public set positionImmediate(value: vec) {
-    this.actualPosition = value;
+    this._actualPosition = value;
     this.targetPosition = value;
+  }
+
+  public get actualPosition(): vec {
+    return this._actualPosition;
   }
 
   public get scale(): number {
     return this.targetScale;
+  }
+
+  public get actualScale(): number {
+    return this._actualScale;
   }
 
   public set scale(value: number) {
@@ -104,12 +112,12 @@ export default class Camera {
   }
 
   public set scaleImmediate(value: number) {
-    this.actualScale = clamp(
+    this._actualScale = clamp(
       value,
       this.options.minScale,
       this.options.maxScale
     );
-    this.targetScale = this.actualScale;
+    this.targetScale = this._actualScale;
   }
 
   /**
@@ -117,10 +125,10 @@ export default class Camera {
    */
   public get bounds(): CameraBounds {
     return {
-      top: this.actualPosition.y - (this.size.y / 2) / this.actualScale,
-      bottom: this.actualPosition.y + (this.size.y / 2) / this.actualScale,
-      left: this.actualPosition.x - (this.size.x / 2) / this.actualScale,
-      right: this.actualPosition.x + (this.size.x / 2) / this.actualScale
+      top: this._actualPosition.y - (this.size.y / 2) / this._actualScale,
+      bottom: this._actualPosition.y + (this.size.y / 2) / this._actualScale,
+      left: this._actualPosition.x - (this.size.x / 2) / this._actualScale,
+      right: this._actualPosition.x + (this.size.x / 2) / this._actualScale
     };
   }
 
@@ -145,7 +153,7 @@ export default class Camera {
     // Maybe clamp position to bounds
     if (this.options.bounds) {
       const screenScaled = vec.map(
-        vec.mul(this.size, 1 / this.actualScale),
+        vec.mul(this.size, 1 / this._actualScale),
         Math.ceil
       );
 
@@ -192,17 +200,17 @@ export default class Camera {
       );
     }
 
-    const d = vec.sub(this.actualPosition, this.targetPosition);
-    this.actualPosition = vec.add(this.position, vec.mul(d, this.options.moveEaseAmount));
+    const d = vec.sub(this._actualPosition, this.targetPosition);
+    this._actualPosition = vec.add(this.position, vec.mul(d, this.options.moveEaseAmount));
 
     const s = clamp(this.targetScale, this.options.minScale, this.options.maxScale);
-    this.actualScale = s + (this.actualScale - s) * this.options.scaleEaseAmount;
+    this._actualScale = s + (this._actualScale - s) * this.options.scaleEaseAmount;
 
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.translate(
-      (this.size.x / 2) - this.actualPosition.x * this.actualScale,
-      (this.size.y / 2) - this.actualPosition.y * this.actualScale
+      (this.size.x / 2) - this._actualPosition.x * this._actualScale,
+      (this.size.y / 2) - this._actualPosition.y * this._actualScale
     );
-    context.scale(this.actualScale, this.actualScale);
+    context.scale(this._actualScale, this._actualScale);
   }
 }

@@ -39,15 +39,17 @@ export default class Camera {
     private static readonly defaultOptions;
     private options;
     private size;
-    private actualPosition;
+    private _actualPosition;
     private targetPosition;
-    private actualScale;
+    private _actualScale;
     private targetScale;
     constructor(position: vec, options?: Partial<CameraOptions>);
     get position(): vec;
     set position(value: vec);
     set positionImmediate(value: vec);
+    get actualPosition(): vec;
     get scale(): number;
+    get actualScale(): number;
     set scale(value: number);
     set scaleImmediate(value: number);
     /**
