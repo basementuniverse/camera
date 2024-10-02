@@ -22,13 +22,28 @@ Update the camera transforms:
 
 ```ts
 class Game {
-  // ...
+  private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+
+  private camera: Camera;
+
+  public constructor() {
+    this.camera = new Camera();
+  }
+
+  public update() {
+    // We should update the camera every frame...
+    this.camera.update({
+      x: this.canvas.width,
+      y: this.canvas.height,
+    });
+  }
 
   public draw(context: CanvasRenderingContext2D) {
     context.save();
 
-    // This updates context transforms based on the camera's position and scale
-    this.camera.draw(context);
+    // This applies the camera's transforms...
+    this.camera.setTransforms(context);
 
     // Draw everything else...
 
@@ -93,3 +108,38 @@ type Bounds = {
   right: number;
 };
 ```
+
+## Backwards compatibility
+
+This camera component used to work like so:
+
+```ts
+class Game {
+  private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+
+  private camera: Camera;
+
+  public constructor() {
+    this.camera = new Camera();
+  }
+
+  public update() {
+    // ...
+  }
+
+  public draw(context: CanvasRenderingContext2D) {
+    context.save();
+
+    this.camera.draw(context, { x: this.canvas.width, y: this.canvas.height });
+
+    // Draw everything else...
+
+    context.restore();
+  }
+}
+```
+
+More specifically, it had a `draw()` method which updated the camera's internal state _and_ applied the context transforms all in one go.
+
+This method still exists for backwards compatibility, but it is now deprecated and might be removed in a future version.

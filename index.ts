@@ -145,9 +145,9 @@ export default class Camera {
   }
 
   /**
-   * Update context transforms to match camera position and scale
+   * Update the camera
    */
-  public draw(context: CanvasRenderingContext2D, screen: vec) {
+  public update(screen: vec) {
     this.size = vec(screen);
 
     // Maybe clamp position to bounds
@@ -205,12 +205,25 @@ export default class Camera {
 
     const s = clamp(this.targetScale, this.options.minScale, this.options.maxScale);
     this._actualScale = s + (this._actualScale - s) * this.options.scaleEaseAmount;
+  }
 
+  /**
+   * Set the camera transforms on a canvas context
+   */
+  public setTransforms(context: CanvasRenderingContext2D) {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.translate(
       (this.size.x / 2) - this._actualPosition.x * this._actualScale,
       (this.size.y / 2) - this._actualPosition.y * this._actualScale
     );
     context.scale(this._actualScale, this._actualScale);
+  }
+
+  /**
+   * Update the camera and then set transforms on a canvas context
+   */
+  public draw(context: CanvasRenderingContext2D, screen: vec) {
+    this.update(screen);
+    this.setTransforms(context);
   }
 }

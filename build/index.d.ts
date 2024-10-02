@@ -61,7 +61,15 @@ export default class Camera {
      */
     positionToWorld(position: vec): vec;
     /**
-     * Update context transforms to match camera position and scale
+     * Update the camera
+     */
+    update(screen: vec): void;
+    /**
+     * Set the camera transforms on a canvas context
+     */
+    setTransforms(context: CanvasRenderingContext2D): void;
+    /**
+     * Update the camera and then set transforms on a canvas context
      */
     draw(context: CanvasRenderingContext2D, screen: vec): void;
 }
