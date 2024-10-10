@@ -135,12 +135,24 @@ export default class Camera {
   /**
    * Convert a screen position to a world position
    */
-  public positionToWorld(position: vec): vec {
+  public screenToWorld(position: vec): vec {
     const bounds = this.bounds;
 
     return vec.add(
       { x: bounds.left, y: bounds.top },
-      vec.mul(position, 1 / this.scale)
+      vec.mul(position, 1 / this.actualScale)
+    );
+  }
+
+  /**
+   * Convert a world position to a screen position
+   */
+  public worldToScreen(position: vec): vec {
+    const bounds = this.bounds;
+
+    return vec.mul(
+      vec.sub(position, { x: bounds.left, y: bounds.top }),
+      this.actualScale
     );
   }
 

@@ -81,7 +81,16 @@ Convert a screen-space position to world-space:
 const worldPosition: {
   x: number;
   y: number;
-} = camera.positionToWorld(screenPosition);
+} = camera.screenToWorld(screenPosition);
+```
+
+Convert a world-space position to screen-space:
+
+```ts
+const screenPosition: {
+  x: number;
+  y: number;
+} = camera.worldToScreen(worldPosition);
 ```
 
 ## Options

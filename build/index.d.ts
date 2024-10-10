@@ -59,7 +59,11 @@ export default class Camera {
     /**
      * Convert a screen position to a world position
      */
-    positionToWorld(position: vec): vec;
+    screenToWorld(position: vec): vec;
+    /**
+     * Convert a world position to a screen position
+     */
+    worldToScreen(position: vec): vec;
     /**
      * Update the camera
      */
