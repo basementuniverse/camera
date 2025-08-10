@@ -2,16 +2,19 @@
   "name": "@basementuniverse/camera",
   "version": "1.5.0",
   "description": "A camera component for use in 2d browser games",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
-  "scripts": {
-    "build": "webpack"
-  },
   "author": "Gordon Larrigan <gordonlarrigan@gmail.com> (https://gordonlarrigan.com)",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/basementuniverse/camera.git"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "webpack"
   },
   "dependencies": {
     "@basementuniverse/vec": "^2.3.5"
