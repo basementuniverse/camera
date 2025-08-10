@@ -1,6 +1,6 @@
 {
   "name": "@basementuniverse/camera",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A camera component for use in 2d browser games",
   "author": "Gordon Larrigan <gordonlarrigan@gmail.com> (https://gordonlarrigan.com)",
   "license": "MIT",
