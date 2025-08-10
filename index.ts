@@ -1,4 +1,4 @@
-import { vec } from '@basementuniverse/vec';
+import { vec2 } from '@basementuniverse/vec';
 
 export type CameraOptions = {
   /**
@@ -44,11 +44,11 @@ export type CameraBounds = {
 };
 
 function clamp(a: number, min = 0, max = 1) {
-  return a < min ? min : (a > max ? max : a);
+  return a < min ? min : a > max ? max : a;
 }
 
 export default class Camera {
-  private static readonly defaultOptions: CameraOptions = {
+  private static readonly DEFAULT_OPTIONS: CameraOptions = {
     allowScale: true,
     minScale: 0.5,
     maxScale: 4,
@@ -57,41 +57,32 @@ export default class Camera {
   };
 
   private options: CameraOptions;
-
-  private size: vec = vec();
-
-  private _actualPosition: vec = vec();
-
-  private targetPosition: vec = vec();
-
+  private size: vec2 = vec2();
+  private _actualPosition: vec2 = vec2();
+  private targetPosition: vec2 = vec2();
   private _actualScale: number = 1;
-
   private targetScale: number = 1;
 
-  public constructor(position: vec, options?: Partial<CameraOptions>) {
+  public constructor(position: vec2, options?: Partial<CameraOptions>) {
     this._actualPosition = position;
     this.targetPosition = position;
-    this.options = Object.assign(
-      {},
-      Camera.defaultOptions,
-      options ?? {}
-    );
+    this.options = Object.assign({}, Camera.DEFAULT_OPTIONS, options ?? {});
   }
 
-  public get position(): vec {
+  public get position(): vec2 {
     return this.targetPosition;
   }
 
-  public set position(value: vec) {
+  public set position(value: vec2) {
     this.targetPosition = value;
   }
 
-  public set positionImmediate(value: vec) {
+  public set positionImmediate(value: vec2) {
     this._actualPosition = value;
     this.targetPosition = value;
   }
 
-  public get actualPosition(): vec {
+  public get actualPosition(): vec2 {
     return this._actualPosition;
   }
 
@@ -125,33 +116,33 @@ export default class Camera {
    */
   public get bounds(): CameraBounds {
     return {
-      top: this._actualPosition.y - (this.size.y / 2) / this._actualScale,
-      bottom: this._actualPosition.y + (this.size.y / 2) / this._actualScale,
-      left: this._actualPosition.x - (this.size.x / 2) / this._actualScale,
-      right: this._actualPosition.x + (this.size.x / 2) / this._actualScale
+      top: this._actualPosition.y - this.size.y / 2 / this._actualScale,
+      bottom: this._actualPosition.y + this.size.y / 2 / this._actualScale,
+      left: this._actualPosition.x - this.size.x / 2 / this._actualScale,
+      right: this._actualPosition.x + this.size.x / 2 / this._actualScale,
     };
   }
 
   /**
    * Convert a screen position to a world position
    */
-  public screenToWorld(position: vec): vec {
+  public screenToWorld(position: vec2): vec2 {
     const bounds = this.bounds;
 
-    return vec.add(
+    return vec2.add(
       { x: bounds.left, y: bounds.top },
-      vec.mul(position, 1 / this.actualScale)
+      vec2.mul(position, 1 / this.actualScale)
     );
   }
 
   /**
    * Convert a world position to a screen position
    */
-  public worldToScreen(position: vec): vec {
+  public worldToScreen(position: vec2): vec2 {
     const bounds = this.bounds;
 
-    return vec.mul(
-      vec.sub(position, { x: bounds.left, y: bounds.top }),
+    return vec2.mul(
+      vec2.sub(position, { x: bounds.left, y: bounds.top }),
       this.actualScale
     );
   }
@@ -159,13 +150,13 @@ export default class Camera {
   /**
    * Update the camera
    */
-  public update(screen: vec) {
-    this.size = vec(screen);
+  public update(screen: vec2) {
+    this.size = vec2(screen);
 
     // Maybe clamp position to bounds
     if (this.options.bounds) {
-      const screenScaled = vec.map(
-        vec.mul(this.size, 1 / this._actualScale),
+      const screenScaled = vec2.map(
+        vec2.mul(this.size, 1 / this._actualScale),
         Math.ceil
       );
 
@@ -187,15 +178,15 @@ export default class Camera {
         actualBounds.bottom += halfDiff;
       }
 
-      const halfScreenScaled = vec.map(
-        vec.mul(screenScaled, 1 / 2),
+      const halfScreenScaled = vec2.map(
+        vec2.mul(screenScaled, 1 / 2),
         Math.ceil
       );
-      const minPosition = vec(
+      const minPosition = vec2(
         actualBounds.left + halfScreenScaled.x,
         actualBounds.top + halfScreenScaled.y
       );
-      const maxPosition = vec(
+      const maxPosition = vec2(
         actualBounds.right - halfScreenScaled.x,
         actualBounds.bottom - halfScreenScaled.y
       );
@@ -212,11 +203,19 @@ export default class Camera {
       );
     }
 
-    const d = vec.sub(this._actualPosition, this.targetPosition);
-    this._actualPosition = vec.add(this.position, vec.mul(d, this.options.moveEaseAmount));
+    const d = vec2.sub(this._actualPosition, this.targetPosition);
+    this._actualPosition = vec2.add(
+      this.position,
+      vec2.mul(d, this.options.moveEaseAmount)
+    );
 
-    const s = clamp(this.targetScale, this.options.minScale, this.options.maxScale);
-    this._actualScale = s + (this._actualScale - s) * this.options.scaleEaseAmount;
+    const s = clamp(
+      this.targetScale,
+      this.options.minScale,
+      this.options.maxScale
+    );
+    this._actualScale =
+      s + (this._actualScale - s) * this.options.scaleEaseAmount;
   }
 
   /**
@@ -225,8 +224,8 @@ export default class Camera {
   public setTransforms(context: CanvasRenderingContext2D) {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.translate(
-      (this.size.x / 2) - this._actualPosition.x * this._actualScale,
-      (this.size.y / 2) - this._actualPosition.y * this._actualScale
+      this.size.x / 2 - this._actualPosition.x * this._actualScale,
+      this.size.y / 2 - this._actualPosition.y * this._actualScale
     );
     context.scale(this._actualScale, this._actualScale);
   }
@@ -234,7 +233,7 @@ export default class Camera {
   /**
    * Update the camera and then set transforms on a canvas context
    */
-  public draw(context: CanvasRenderingContext2D, screen: vec) {
+  public draw(context: CanvasRenderingContext2D, screen: vec2) {
     this.update(screen);
     this.setTransforms(context);
   }
