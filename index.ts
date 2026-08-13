@@ -1,54 +1,11 @@
 import { vec2 } from '@basementuniverse/vec';
 
-export type CameraOptions = {
-  /**
-   * Optionally restrict camera position to bounds
-   */
-  bounds?: CameraBounds;
-
-  /**
-   * Allow the viewport to be scaled
-   */
-  allowScale: boolean;
-
-  /**
-   * Minimum viewport scale
-   */
-  minScale: number;
-
-  /**
-   * Maximum viewport scale
-   */
-  maxScale: number;
-
-  /**
-   * Camera movement ease amount
-   *
-   * Set to 0 for no easing
-   */
-  moveEaseAmount: number;
-
-  /**
-   * Camera scaling ease amount
-   *
-   * Set to 0 for no easing
-   */
-  scaleEaseAmount: number;
-};
-
-export type CameraBounds = {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-};
-
 function clamp(a: number, min = 0, max = 1) {
   return a < min ? min : a > max ? max : a;
 }
 
-export default class Camera {
-  private static readonly DEFAULT_OPTIONS: CameraOptions = {
+class Camera {
+  private static readonly DEFAULT_OPTIONS: Camera.CameraOptions = {
     allowScale: true,
     minScale: 0.5,
     maxScale: 4,
@@ -56,14 +13,14 @@ export default class Camera {
     scaleEaseAmount: 0.1,
   };
 
-  private options: CameraOptions;
+  private options: Camera.CameraOptions;
   private size: vec2 = vec2();
   private _actualPosition: vec2 = vec2();
   private targetPosition: vec2 = vec2();
   private _actualScale: number = 1;
   private targetScale: number = 1;
 
-  public constructor(position: vec2, options?: Partial<CameraOptions>) {
+  public constructor(position: vec2, options?: Partial<Camera.CameraOptions>) {
     this._actualPosition = position;
     this.targetPosition = position;
     this.options = Object.assign({}, Camera.DEFAULT_OPTIONS, options ?? {});
@@ -114,7 +71,7 @@ export default class Camera {
   /**
    * Get screen bounds based on the current camera position and scale
    */
-  public get bounds(): CameraBounds {
+  public get bounds(): Camera.CameraBounds {
     return {
       top: this._actualPosition.y - this.size.y / 2 / this._actualScale,
       bottom: this._actualPosition.y + this.size.y / 2 / this._actualScale,
@@ -238,3 +195,50 @@ export default class Camera {
     this.setTransforms(context);
   }
 }
+
+namespace Camera {
+  export type CameraOptions = {
+    /**
+     * Optionally restrict camera position to bounds
+     */
+    bounds?: CameraBounds;
+
+    /**
+     * Allow the viewport to be scaled
+     */
+    allowScale: boolean;
+
+    /**
+     * Minimum viewport scale
+     */
+    minScale: number;
+
+    /**
+     * Maximum viewport scale
+     */
+    maxScale: number;
+
+    /**
+     * Camera movement ease amount
+     *
+     * Set to 0 for no easing
+     */
+    moveEaseAmount: number;
+
+    /**
+     * Camera scaling ease amount
+     *
+     * Set to 0 for no easing
+     */
+    scaleEaseAmount: number;
+  };
+
+  export type CameraBounds = {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  };
+}
+
+export = Camera;

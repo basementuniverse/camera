@@ -1,41 +1,5 @@
 import { vec2 } from '@basementuniverse/vec';
-export type CameraOptions = {
-    /**
-     * Optionally restrict camera position to bounds
-     */
-    bounds?: CameraBounds;
-    /**
-     * Allow the viewport to be scaled
-     */
-    allowScale: boolean;
-    /**
-     * Minimum viewport scale
-     */
-    minScale: number;
-    /**
-     * Maximum viewport scale
-     */
-    maxScale: number;
-    /**
-     * Camera movement ease amount
-     *
-     * Set to 0 for no easing
-     */
-    moveEaseAmount: number;
-    /**
-     * Camera scaling ease amount
-     *
-     * Set to 0 for no easing
-     */
-    scaleEaseAmount: number;
-};
-export type CameraBounds = {
-    top: number;
-    bottom: number;
-    left: number;
-    right: number;
-};
-export default class Camera {
+declare class Camera {
     private static readonly DEFAULT_OPTIONS;
     private options;
     private size;
@@ -43,7 +7,7 @@ export default class Camera {
     private targetPosition;
     private _actualScale;
     private targetScale;
-    constructor(position: vec2, options?: Partial<CameraOptions>);
+    constructor(position: vec2, options?: Partial<Camera.CameraOptions>);
     get position(): vec2;
     set position(value: vec2);
     set positionImmediate(value: vec2);
@@ -55,7 +19,7 @@ export default class Camera {
     /**
      * Get screen bounds based on the current camera position and scale
      */
-    get bounds(): CameraBounds;
+    get bounds(): Camera.CameraBounds;
     /**
      * Convert a screen position to a world position
      */
@@ -77,3 +41,42 @@ export default class Camera {
      */
     draw(context: CanvasRenderingContext2D, screen: vec2): void;
 }
+declare namespace Camera {
+    type CameraOptions = {
+        /**
+         * Optionally restrict camera position to bounds
+         */
+        bounds?: CameraBounds;
+        /**
+         * Allow the viewport to be scaled
+         */
+        allowScale: boolean;
+        /**
+         * Minimum viewport scale
+         */
+        minScale: number;
+        /**
+         * Maximum viewport scale
+         */
+        maxScale: number;
+        /**
+         * Camera movement ease amount
+         *
+         * Set to 0 for no easing
+         */
+        moveEaseAmount: number;
+        /**
+         * Camera scaling ease amount
+         *
+         * Set to 0 for no easing
+         */
+        scaleEaseAmount: number;
+    };
+    type CameraBounds = {
+        top: number;
+        bottom: number;
+        left: number;
+        right: number;
+    };
+}
+export = Camera;
