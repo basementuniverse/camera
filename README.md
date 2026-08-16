@@ -8,6 +8,15 @@ A camera component for use in 2d browser games.
 npm install @basementuniverse/camera
 ```
 
+For direct browser usage, include the UMD build with a script tag:
+
+```html
+<script src="build/index.js"></script>
+```
+
+The build exposes the package's main class as the `BasementUniverseCamera` browser
+global. It does not add each export directly to `window`.
+
 ## How to use
 
 Create a camera:
@@ -16,6 +25,18 @@ Create a camera:
 import Camera from '@basementuniverse/camera';
 
 const camera = new Camera();
+```
+
+When using the library directly from a browser script, use the
+`BasementUniverseCamera` global:
+
+```html
+<script src="build/index.js"></script>
+<script>
+  const camera = new BasementUniverseCamera({ x: 0, y: 0 });
+
+  camera.update({ x: canvas.width, y: canvas.height });
+</script>
 ```
 
 Update the camera transforms:

@@ -2,9 +2,36 @@
 
 Package: `@basementuniverse/camera`
 
+## Browser usage
+
+For direct browser usage, load `build/index.js` with a `<script>` tag and use
+the namespaced global:
+
+```html
+<script src="build/index.js"></script>
+<script>
+	const instance = new BasementUniverseCamera(/* ... */);
+</script>
+```
+
+The UMD build supports CommonJS `require()` and bundlers, but native ESM
+imports require a separate ESM build that this package does not currently ship.
+
 ## Export
 
-- Default export: `Camera`
+The module uses `export = Camera`, so the package itself *is* the `Camera`
+class:
+
+```ts
+import Camera from '@basementuniverse/camera';
+```
+
+```js
+const Camera = require('@basementuniverse/camera');
+```
+
+Its types are reachable through the merged namespace: `Camera.CameraOptions`
+and `Camera.CameraBounds`.
 
 ## Constructor
 
